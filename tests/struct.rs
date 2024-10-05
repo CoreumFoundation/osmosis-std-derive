@@ -1,4 +1,4 @@
-use cosmwasm_std::CosmosMsg;
+use cosmwasm_std::AnyMsg;
 use osmosis_std_derive::CosmwasmExt;
 
 #[derive(Clone, PartialEq, Eq, ::prost::Message, CosmwasmExt)]
@@ -21,7 +21,7 @@ fn main() {
         subdenom: "uxxx".to_string(),
     };
 
-    let _: CosmosMsg = msg.to_any();
+    let _: AnyMsg = msg.to_any();
 }
 
 mod shim {

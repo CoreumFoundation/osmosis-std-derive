@@ -72,11 +72,11 @@ pub fn derive_cosmwasm_ext(input: TokenStream) -> TokenStream {
                     .expect("Message encoding must be infallible");
                 bytes
             }
-            pub fn to_any(&self) -> cosmwasm_std::CosmosMsg {
-                cosmwasm_std::CosmosMsg::Any(cosmwasm_std::AnyMsg {
+            pub fn to_any(&self) -> cosmwasm_std::AnyMsg {
+                cosmwasm_std::AnyMsg {
                     type_url: Self::TYPE_URL.to_string(),
                     value: cosmwasm_std::Binary::from(self.to_proto_bytes()),
-                })
+                }
             }
         }
 
