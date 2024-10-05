@@ -21,7 +21,7 @@ fn main() {
         subdenom: "uxxx".to_string(),
     };
 
-    let _: CosmosMsg = msg.into();
+    let _: CosmosMsg = msg.to_any();
 }
 
 mod shim {

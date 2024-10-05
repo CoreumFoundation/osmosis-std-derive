@@ -1,4 +1,4 @@
-use cosmwasm_std::{Empty, QueryRequest};
+use cosmwasm_std::{CosmosMsg, Empty, QueryRequest};
 use osmosis_std_derive::CosmwasmExt;
 
 #[derive(
@@ -23,10 +23,10 @@ pub struct QueryDenomsFromCreatorResponse {
 }
 
 fn main() {
-    let _: QueryRequest<Empty> = QueryDenomsFromCreatorRequest {
+    let _: CosmosMsg = QueryDenomsFromCreatorRequest {
         creator: "osmo1sr9zm2pq3xrru7l7gz632t2rqs9caet9xulwvapcqagq9pytkcgqwfc3nk".to_string(),
     }
-    .into();
+    .to_any();
 }
 
 mod shim {
