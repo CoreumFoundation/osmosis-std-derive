@@ -93,7 +93,7 @@ pub fn derive_cosmwasm_ext(input: TokenStream) -> TokenStream {
 
             fn try_from(binary: cosmwasm_std::Binary) -> ::std::result::Result<Self, Self::Error> {
                 use ::prost::Message;
-                Self::decode(&binary[..]).map_err(|e| {
+                Ok(Self::decode(&binary[..]).map_err(|e| {
                     cosmwasm_std::StdError::parse_err(
                         stringify!(#ident),
                         format!(
@@ -103,7 +103,7 @@ pub fn derive_cosmwasm_ext(input: TokenStream) -> TokenStream {
                             e
                         )
                     )
-                })
+                }).unwrap())
             }
         }
 
