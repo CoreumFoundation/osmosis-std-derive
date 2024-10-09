@@ -1,12 +1,12 @@
 use cosmwasm_std::AnyMsg;
-use osmosis_std_derive::CosmwasmExt;
+use coreum_std_derive::CosmwasmExt;
 
 #[derive(
     Clone, PartialEq, Eq, ::prost::Message, serde::Serialize, serde::Deserialize, CosmwasmExt,
 )]
-#[proto_message(type_url = "/osmosis.tokenfactory.v1beta1.QueryDenomsFromCreatorRequest")]
+#[proto_message(type_url = "/coreum.tokenfactory.v1beta1.QueryDenomsFromCreatorRequest")]
 #[proto_query(
-    path = "/osmosis.tokenfactory.v1beta1.Query/DenomsFromCreator",
+    path = "/coreum.tokenfactory.v1beta1.Query/DenomsFromCreator",
     response_type = QueryDenomsFromCreatorResponse
 )]
 pub struct QueryDenomsFromCreatorRequest {
@@ -16,7 +16,7 @@ pub struct QueryDenomsFromCreatorRequest {
 #[derive(
     Clone, PartialEq, Eq, ::prost::Message, serde::Serialize, serde::Deserialize, CosmwasmExt,
 )]
-#[proto_message(type_url = "/osmosis.tokenfactory.v1beta1.QueryDenomsFromCreatorResponse")]
+#[proto_message(type_url = "/coreum.tokenfactory.v1beta1.QueryDenomsFromCreatorResponse")]
 pub struct QueryDenomsFromCreatorResponse {
     #[prost(string, repeated, tag = "1")]
     pub denoms: ::prost::alloc::vec::Vec<::prost::alloc::string::String>,
