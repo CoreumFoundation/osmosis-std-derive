@@ -40,19 +40,19 @@ pub fn derive_cosmwasm_ext(input: TokenStream) -> TokenStream {
         let res = get_query_attrs(&input.attrs, match_kv_attr!("response_type", Ident));
 
         let query_request_conversion = quote! {
-            impl <Q: cosmwasm_std::CustomQuery> From<#ident> for cosmwasm_std::QueryRequest<Q> {
+            impl From<#ident> for cosmwasm_std::CosmosMsg {
                 fn from(msg: #ident) -> Self {
-                    cosmwasm_std::QueryRequest::<Q>::Stargate {
-                        path: #path.to_string(),
-                        data: msg.into(),
-                    }
+                    cosmwasm_std::CosmosMsg::Any(cosmwasm_std::AnyMsg {
+                        type_url: #path.to_string(),
+                        value: cosmwasm_std::Binary::from(msg.to_proto_bytes()),
+                    })
                 }
             }
         };
 
         let cosmwasm_query = quote! {
             pub fn query(self, querier: &cosmwasm_std::QuerierWrapper<impl cosmwasm_std::CustomQuery>) -> cosmwasm_std::StdResult<#res> {
-                querier.query::<#res>(&self.into())
+                Ok(#res::try_from(querier.query_grpc(#path.to_string(), self.into())?).unwrap())
             }
         };
 
@@ -72,10 +72,10 @@ pub fn derive_cosmwasm_ext(input: TokenStream) -> TokenStream {
                     .expect("Message encoding must be infallible");
                 bytes
             }
-            pub fn to_any(&self) -> crate::shim::Any {
-                crate::shim::Any {
+            pub fn to_any(&self) -> cosmwasm_std::AnyMsg {
+                cosmwasm_std::AnyMsg {
                     type_url: Self::TYPE_URL.to_string(),
-                    value: self.to_proto_bytes(),
+                    value: cosmwasm_std::Binary::from(self.to_proto_bytes()),
                 }
             }
         }
@@ -88,21 +88,12 @@ pub fn derive_cosmwasm_ext(input: TokenStream) -> TokenStream {
             }
         }
 
-        impl<T> From<#ident> for cosmwasm_std::CosmosMsg<T> {
-            fn from(msg: #ident) -> Self {
-                cosmwasm_std::CosmosMsg::<T>::Stargate {
-                    type_url: #type_url.to_string(),
-                    value: msg.into(),
-                }
-            }
-        }
-
         impl TryFrom<cosmwasm_std::Binary> for #ident {
             type Error = cosmwasm_std::StdError;
 
             fn try_from(binary: cosmwasm_std::Binary) -> ::std::result::Result<Self, Self::Error> {
                 use ::prost::Message;
-                Self::decode(&binary[..]).map_err(|e| {
+                Ok(Self::decode(&binary[..]).map_err(|e| {
                     cosmwasm_std::StdError::parse_err(
                         stringify!(#ident),
                         format!(
@@ -112,7 +103,7 @@ pub fn derive_cosmwasm_ext(input: TokenStream) -> TokenStream {
                             e
                         )
                     )
-                })
+                }).unwrap())
             }
         }
 
